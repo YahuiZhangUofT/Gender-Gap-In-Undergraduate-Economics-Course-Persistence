@@ -8,5 +8,5 @@ The raw data and clean data are located in the data file
 
 The pdf version of the paper, reference file, and the RMB version of the paper are in the output file.
 
-The R scirpt is the script file.
+The R scirpt is in the script file.
 
