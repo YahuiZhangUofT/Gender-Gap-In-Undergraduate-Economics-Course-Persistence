@@ -1,0 +1,190 @@
+---
+title: "The Impact of Course Performance on the Economics Degree Gender Gap"
+author: "Yahui Zhang, Tigao Martins, Zhiqi Chen"
+date: "25 February 2022"
+output:
+  bookdown::pdf_document2:
+thanks: "Code and data are available at: https://github.com/YahuiZhangUofT/Gender-Gap-In-Undergraduate-Economics-Course-Persistence"
+abstract: 1
+toc: FALSE
+bibliography: references.bib
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(knitr)
+library(ggplot2)
+library(stringr)
+library(tinytex)
+library(bookdown)
+library(haven)
+library(kableExtra)
+
+```
+
+
+```{r load data, include=FALSE}
+#load clean data for previous grade
+Macro_female_count_total <- read.csv("Macro_female_count_total.csv")
+Macro_male_count_total <- read.csv("Macro_male_count_total.csv")
+Int_micro_female_count_total <- read.csv("Int_micro_female_count_total.csv")
+Int_micro_male_count_total <- read.csv("Int_micro_male_count_total.csv")
+
+#load data for relative grade
+female_macro <- read.csv("Macro_data_female.csv")
+male_macro <- read.csv("Macro_data_male.csv")
+female_Int_micro_data <- read.csv("Int_micro_data_female.csv")
+male_Int_micro_data <- read.csv("Int_micro_data_male.csv")
+
+```
+
+# Introduction
+
+
+
+# Data
+
+
+## Figure one and two
+```{r F Macro, fig.cap="Percentage of female students joining the Introduction to Macroeconomics course by Microeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Macro_female_count_total, aes(x = micro_grade, y = Percentage, color = macro_econ == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Macroeconomics course",
+       x = "Grade from Microeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Introduction to Macroeconomics course",
+       subtitle = "Gender: Female")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+```{r M Macro, fig.cap="Percentage of Male students joining the Introduction to Macroeconomics course by Microeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Macro_male_count_total, aes(x = micro_grade, y = Percentage, color = macro_econ == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Macroeconomics course",
+       x = "Grade from Microeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Introduction to Macroeconomics course",
+       subtitle = "Gender: Male")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+
+## Figure three and four
+```{r F RR Marco, fig.cap="Female students' Microeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(female_macro, aes(x = mean_gpa_nomicro, y = micro_grade , color = macro_econ == 1)) +
+geom_point() +
+  labs(color = "Join Macro Course",
+       x = "Mean Gpa",
+       y = "Grade from Microeconomics course",
+       title = "Female student's relative grade between micro grade and mean gpa")+
+  geom_abline(intercept =-0.4 , slope = 1.1)
+```
+
+
+```{r M RR Marco, fig.cap="Male students' Microeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(male_macro, aes(x = mean_gpa_nomicro, y = micro_grade , color = macro_econ == 1)) +
+geom_point() +
+  labs(color = "Join Macro Course",
+       x = "Mean Gpa",
+       y = "Grade from Microeconomics course",
+       title = "Male student's relative grade between micro grade and mean gpa")+
+  geom_abline(intercept =0 , slope = 1)
+       
+```
+
+
+
+## Figure five and six
+```{r F Int, fig.cap="Percentage of female students joining the Intermediate Microeconomics course by Macroeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Int_micro_female_count_total, aes(x = macro_grade, y = Percentage, color = int_micro == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Intermediate Microeconomics course",
+       x = "Grade from Macroeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Intermediate Microeconomics course",
+       subtitle = "Gender: Female")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+
+```{r M Int, fig.cap="Percentage of male students joining the Intermediate Microeconomics course by Macroeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Int_micro_male_count_total, aes(x = macro_grade, y = Percentage, color = int_micro == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Intermediate Microeconomics course",
+       x = "Grade from Macroeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Intermediate Microeconomics course",
+       subtitle = "Gender: Male")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+```
+
+
+## Figure seven and eight
+```{r F RR Int, fig.cap="Female students' Macroeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+ggplot(female_Int_micro_data, aes(x = mean_gpa_nomacro, y = macro_grade , color = int_micro == 1)) +
+geom_point() +
+  labs(color = "Join Int Micro Course",
+       x = "Mean Gpa",
+       y = "Grade from Macroeconomics course",
+       title = "Female student's relative grade between macro grade and mean gpa")+
+  geom_abline(intercept =-1 , slope = 1.25)
+
+```
+
+```{r M RR Int, fig.cap="Male students' Macroeconomics grade vs their Mean Gpa",fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(male_Int_micro_data, aes(x = mean_gpa_no_macro, y = macro_grade , color = int_micro == 1)) +
+geom_point() +
+  labs(color = "Join Int Micro Course",
+       x = "Mean Gpa",
+       y = "Grade from Macroeconomics course",
+       title = "Male student's relative grade between macro grade and mean gpa") + geom_abline(intercept =-0.4 , slope = 1.1)
+
+```
+
+
+## Tables
+```{r tab 1, fig.cap="Data in Mean - Introduction to Macroeconomics Course", echo=FALSE}
+read_dta("Macro_data.dta")
+Macro_data <- read_dta("Macro_data.dta")
+
+Macro_table_data <- group_by(Macro_data, female)
+summarise(Macro_table_data, Micro_grade = mean(micro_grade), relative_grade = mean(micro_relative_grade) ) %>% mutate_if(is.numeric, round, digits = 2) -> Macro_table_data2
+knitr::kable(Macro_table_data2, 
+             caption = "Macro table",
+             col.names = c("Gender", "Mean grade", "Mean Relative Grade"),
+             align = c("c", "c", "c")) %>% kable_styling(latex_options = "HOLD_position") %>% add_footnote("0 = Male, 1 = Female", notation="symbol")
+
+```
+
+
+```{r tab 2, fig.cap="Data in Mean - Intermediate Microeconomics Course", echo=FALSE}
+read_dta("Int_micro_data.dta")
+Int_micro_data <- read_dta("Int_micro_data.dta")
+
+Int_micro_table_data <- group_by(Int_micro_data, female)
+summarise(Int_micro_table_data, Macro_grade = mean(macro_grade), relative_grade = mean(macro_relative_grade) ) %>% mutate_if(is.numeric, round, digits = 2) -> Int_micro_table_data2
+knitr::kable(Int_micro_table_data2, 
+             caption = "intermediate Micro Table",
+             col.names = c("Gender", "Mean grade", "Mean Relative Grade"),
+             align = c("c", "c", "c")) %>% kable_styling(latex_options = "HOLD_position") %>% add_footnote("0 = Male, 1 = Female", notation="symbol")
+```
+
+
+# References
