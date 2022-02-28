@@ -1,0 +1,221 @@
+---
+title: "The Impact of Course Performance on the Economics Degree Gender Gap"
+author: "Yahui Zhang, Tigao Martins, Zhiqi Chen"
+date: "25 February 2022"
+output:
+  bookdown::pdf_document2:
+thanks: "Code and data are available at: https://github.com/YahuiZhangUofT/Gender-Gap-In-Undergraduate-Economics-Course-Persistence"
+abstract: There exists a profound gender gap among the pursuance of economics degrees in the university. In university data of students progressing through economics courses, females are found to be more affected by lower grades compared to males. While this is unlikely to be the sole inhibiting factor in achieving an economics degree, there are significant differences to be accounted for. In a continuation of Laura J. Ahlstrom and Carlos J. Asarta, our group conducts an analysis of both male and female university students and draws upon various works of research to understand how this gap exists and what factors can contribute to it.
+toc: FALSE
+bibliography: references.bib
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(knitr)
+library(ggplot2)
+library(stringr)
+library(tinytex)
+library(bookdown)
+library(haven)
+library(kableExtra)
+
+```
+
+
+```{r load data, include=FALSE}
+#load clean data for previous grade
+Macro_female_count_total <- read.csv("Macro_female_count_total.csv")
+Macro_male_count_total <- read.csv("Macro_male_count_total.csv")
+Int_micro_female_count_total <- read.csv("Int_micro_female_count_total.csv")
+Int_micro_male_count_total <- read.csv("Int_micro_male_count_total.csv")
+
+#load data for relative grade
+female_macro <- read.csv("Macro_data_female.csv")
+male_macro <- read.csv("Macro_data_male.csv")
+female_Int_micro_data <- read.csv("Int_micro_data_female.csv")
+male_Int_micro_data <- read.csv("Int_micro_data_male.csv")
+
+#load data for table
+Macro_data <- read.csv("Macro_data.csv")
+Int_micro_data <- read.csv("Int_micro_data.csv")
+
+```
+
+# Introduction
+It is often a goal of our societies to examine cases of discrepancy in our institutions. The focus of this paper, and the one on which it is based on, is to examine the impact of different factors on university students' completion of their undergraduate economics degree. The data are from the University of Delaware records, containing demographic characteristics, coursework results, and measurements of ability [@BasePaper]. For our paper's purposes, we specifically examine the impact of course performance in three courses on whether or not they will join the next level course in their university path. We compare this data across four graphs and one table, displaying this impact and how there exists a clear gap in the results of men compared to women.
+
+What we found is a significant difference in the grades of male students affecting their chance of going to a higher course, and this same relationship but in the female student population. We found that, while men did suffer a lessened chance of being enrolled in their higher respective course, women were found to be more severely affected by this, receiving a lessened chance to move up to the higher course compared to their male counterparts. It should be noted as well, that female students generally received lower marks in the same economics courses as their male counterparts - which is considerable, though not a deciding factor.
+
+While there have been many posited reasons for lack of female representation among university economics graduates, there has been no conclusively determined reason for this phenomenon as of yet. We can, however, look at the data of those in which this phenomenon may find itself appearing: the current students of an economics program. We propose that this information is of particular importance, as it is a look into whether or not the end result, graduation, will take place.
+
+# Data
+To study the impact of course performance and relative grade on undergraduate economics course persistence, we have interpreted data sets extracted from the Inter-university Consortium for Political and Social Research service [@openICPSR]. We accessed this service from the American Economic Association website, where the paper [@BasePaper] we are duplicating from is available. Three raw data sets are available on the platform for public use, including the raw data to help analyze Introduction to Macroeconomics course persistence, the raw data to help analyze Intermediate Microeconomics course persistence, and the raw data for the economics degree selection analysis. These data sets are obtained from the administrative records of the University of Delaware by Laura J. Ahlstrom and Carlos J. Asarta to compute the research journal Gender Gap in Undergraduate Economics Course Persistence and Degree Selection [@BasePaper]. However, our study will primarily focus on analyzing factors impacting the undergraduate economics course persistence and the role of gender on this issue. 
+
+To conduct this analysis, we have used the R language and several R packages to better the performance and smooth the entire process [@CiteR]. The tidyverse packages were used to help construct the graphs and manipulate the data sets [@tidyverse]. Within the tidyverse packages, we used the ggplot2 package to plot the graphs [@ggplot2], the dplyr package to manipulate data and data sets [@dplyr], and the readr package to help access and load the clean data sets for constructing the graphs [@readr]. Moreover, we also used the package haven to help load the raw data sets to our R script during the initial data cleaning process [@haven]. The raw data sets are originally formatted in the .dta, which are meant for the Stata software. With the help of the haven package, we were able to access and operate these data sets in the R studio [@Rstudio]. Meanwhile, the packages knitr [@knitr], tinytex [@tinytex], and bookdown [@bookdown] were used to back the R markdown function and support us to compute our final paper in the pdf format. Additionally, we have used the kableExtra package to create two tables in our paper [@kableExtra]. The add_footnote function was used to add footnotes under the two tables to help the readers understand our row indicators. And we also used the kable_styling function to hold the position of our tables, so they stay wherever they need to be. 
+
+Our study only interpreted two of the three raw data sets available through the Inter-university Consortium for Political and Social Research service. We only focused on the undergraduate economics course persistence part of the paper we are duplicating from. The Macro_data data set contains 11426 observations and 36 variables, including the class profile of each introduction to microeconomics course, each participating students' mean GPA and their grade in this course, their SAT grades and year of entry, and more importantly, their gender and whether they entered the next level course. To examine the relationship between the students' grades on the previous economics course and their willingness to join the economics course at the next level, we have analyzed the percentage of students that joined the Introduction to Macroeconomics course by comparing each grades group and gender group. Other data on the data set were dropped for this analysis as they are not relevant factors. Meanwhile, we have computed a new variable Percentage by counting the number of observations willing to sign up for a higher level economics course with the different grade groups, then divided by the total number of observations in this grade group. The results are separated by gender as one of the research goals is to analyze the gender gap between these phenomena. Furthermore, we also analyzed the relative grade between their grade from the introduction to microeconomics course and their mean GPA to find out if the relative grade will impact their willingness to select the next level economics course. The same analysis is conducted to analyze the course persistence for the intermediate microeconomics course by importing another data set Int_micro_data. In the end, we created two tables with each gender's mean grade in the corresponding economics course and their mean GPA. From these tables, we are able to reveal part of the reasons why there is a gender gap in undergraduate economic course persistence and economics degrees selection. 
+
+# Result
+
+## Figure one and two
+```{r FMacro, fig.cap="Percentage of female students joining the Introduction to Macroeconomics course by Microeconomics course grade", fig.height=4.5, echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(Macro_female_count_total, aes(x = micro_grade, y = Percentage, color = macro_econ == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Macroeconomics course",
+       x = "Grade from Microeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Introduction to Macroeconomics course",
+       subtitle = "Gender: Female")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+```{r MMacro, fig.cap="Percentage of Male students joining the Introduction to Macroeconomics course by Microeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Macro_male_count_total, aes(x = micro_grade, y = Percentage, color = macro_econ == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Macroeconomics course",
+       x = "Grade from Microeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Introduction to Macroeconomics course",
+       subtitle = "Gender: Male")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+In the charts displaying the relationship between the percentage of students joining the next level course and their grade from their microeconomics course, we see a similar trend albeit different results when comparing male students to female students. While female students show little difference in their likelihood of joining the higher level macroeconomics course due to their grades, male students show a greater variety of particular notes is the higher levels of male students, shown in Figure 1, progressing to the macroeconomics course with an approximate GPA of 2.0 compared to female students, shown in \@ref(fig:MMacro).
+
+\newpage
+## Figure three and four
+```{r FRRMarco, fig.cap="Female students' Microeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(female_macro, aes(x = mean_gpa_nomicro, y = micro_grade , color = macro_econ == 1)) +
+geom_point() +
+  labs(color = "Join Macro Course",
+       x = "Mean Gpa",
+       y = "Grade from Microeconomics course",
+       title = "Female student's relative grade between micro grade and mean gpa")+
+  geom_abline(intercept =-0.4 , slope = 1.1)
+```
+
+```{r MRRMarco, fig.cap="Male students' Microeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(male_macro, aes(x = mean_gpa_nomicro, y = micro_grade , color = macro_econ == 1)) +
+geom_point() +
+  labs(color = "Join Macro Course",
+       x = "Mean Gpa",
+       y = "Grade from Microeconomics course",
+       title = "Male student's relative grade between micro grade and mean gpa")+
+  geom_abline(intercept =0 , slope = 1)
+       
+```
+
+The charts comparing the grades of male and female students from their microeconomics courses to their mean GPA, we see a similar distribution of progression into later levels in the students achieving higher grades. Figure 3, displaying female students, shows a lessened amount of progression to the macroeconomics course among those with a lower microeconomics mark, compared to the results of Figure 4, which shows male students. In this way, grades are shown to have a big impact on the sustainability of a student's continuing economics courses. If the grade in the course is below the student's mean GPA, it is likely that the student will not continue the course.
+
+\newpage
+## Figure five and six
+```{r FInt, fig.cap="Percentage of female students joining the Intermediate Microeconomics course by Macroeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Int_micro_female_count_total, aes(x = macro_grade, y = Percentage, color = int_micro == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Intermediate Microeconomics course",
+       x = "Grade from Macroeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Intermediate Microeconomics course",
+       subtitle = "Gender: Female")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+
+```
+
+```{r MInt, fig.cap="Percentage of male students joining the Intermediate Microeconomics course by Macroeconomics course grade",fig.height=4.5, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(Int_micro_male_count_total, aes(x = macro_grade, y = Percentage, color = int_micro == 1)) +
+geom_smooth(se=FALSE) +
+  labs(color = "Joining Intermediate Microeconomics course",
+       x = "Grade from Macroeconomics course",
+       y = "Percentage of students joining next level course",
+       title = "Percentage of each grade group joining the Intermediate Microeconomics course",
+       subtitle = "Gender: Male")+
+       theme(axis.text.x = element_text(angle=0, vjust=1))
+```
+
+Figures 5 and 6 display female and male rates of progression into the higher level intermediate microeconomics course, with their grades in the previous macroeconomics course, respectively. Figure 5 shows a significantly muted acceptance rate compared to Figure 6, with male students showing both acceptances and non-acceptance approaching fifty percent. On average, male and female students were more likely to continue with macroeconomics if they achieved higher course grades in microeconomics. From this, we can see almost complete disengagement from higher-level courses from the female student population.
+
+\newpage
+## Figure seven and eight
+```{r FRRInt, fig.cap="Female students' Macroeconomics grade vs their Mean Gpa", fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+ggplot(female_Int_micro_data, aes(x = mean_gpa_nomacro, y = macro_grade , color = int_micro == 1)) +
+geom_point() +
+  labs(color = "Join Int Micro Course",
+       x = "Mean Gpa",
+       y = "Grade from Macroeconomics course",
+       title = "Female student's relative grade between macro grade and mean gpa")+
+  geom_abline(intercept =-1 , slope = 1.25)
+
+```
+
+```{r MRRInt, fig.cap="Male students' Macroeconomics grade vs their Mean Gpa",fig.height=4, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(male_Int_micro_data, aes(x = mean_gpa_no_macro, y = macro_grade , color = int_micro == 1)) +
+geom_point() +
+  labs(color = "Join Int Micro Course",
+       x = "Mean Gpa",
+       y = "Grade from Macroeconomics course",
+       title = "Male student's relative grade between macro grade and mean gpa") + geom_abline(intercept =-0.4 , slope = 1.1)
+
+```
+
+Figures 7 and 8 show both female and male relative grade, found from their grades from the previous macroeconomics course, with their mean GPA. While there are similar rates of a lack of progression into the intermediate microeconomics course, Figure 8 shows that male students once again display higher rates of progression, far more evenly distributed amongst various macroeconomics grade values compared to the female Figure 7, which instead has almost all of its instances of progression shown in the higher macroeconomics grade values.
+
+\newpage
+## Tables
+```{r tab1, fig.cap="Data in Mean - Introduction to Macroeconomics Course", echo=FALSE}
+
+Macro_table_data <- group_by(Macro_data, female)
+summarise(Macro_table_data, Micro_grade = mean(micro_grade), relative_grade = mean(micro_relative_grade) ) %>% mutate_if(is.numeric, round, digits = 2) -> Macro_table_data2
+knitr::kable(Macro_table_data2, 
+             caption = "Macro table",
+             col.names = c("Gender", "Mean grade", "Mean Relative Grade"),
+             align = c("c", "c", "c")) %>% add_footnote("0 = Male, 1 = Female", notation="symbol") %>% kable_styling(latex_options = "HOLD_position")
+
+```
+
+
+```{r tab2, fig.cap="Data in Mean - Intermediate Microeconomics Course", echo=FALSE}
+
+Int_micro_table_data <- group_by(Int_micro_data, female)
+summarise(Int_micro_table_data, Macro_grade = mean(macro_grade), relative_grade = mean(macro_relative_grade) ) %>% mutate_if(is.numeric, round, digits = 2) -> Int_micro_table_data2
+knitr::kable(Int_micro_table_data2, 
+             caption = "intermediate Micro Table",
+             col.names = c("Gender", "Mean grade", "Mean Relative Grade"),
+             align = c("c", "c", "c")) %>% add_footnote("0 = Male, 1 = Female", notation="symbol") %>% kable_styling(latex_options = "HOLD_position")
+```
+
+Figures 9 and 10 are a comparison between two different sets of values on each table. Figure 9 is a comparison between the mean grades of males and females, as well as their mean relative grade, for the macroeconomics class. As we can see, there is a significant difference between both values when comparing males and females in Figure 9. Figure 10’s differences are less pronounced, though it is possible that this is due to a smaller sample size due to a smaller class population.
+
+\newpage
+# Discussion
+There have been attempts in the past to gain a greater understanding as to why there is an underrepresentation of female graduates in university economics programs. One such example is the Committee on the Status of Women in the Economics Profession’s investigation of economics departments in 1972 and 1973, which used surveys as a method of data collection to gain a better understanding of this issue [@Stalled]. While similar efforts have persisted throughout the years, there still remains this persistent inequality.
+
+One question raised in the information presented in this paper, and what we have found in the process of creating it, is: how much of this is in the control of institutions? Is it possible that this phenomenon is not simply on the part of the student but rather a multi-faceted issue involving numerous factors? Simply looking at charts or other representations of data does not offer a complete view of the given issue, only a glimpse into a certain part of the issue. It would be overly simplistic to state that the sole deciding factor explaining female underrepresentation in this degree field is the on the part of the student, which may be what is interpreted by someone viewing this data as cause and effect, the cause being a student’s grades.
+
+We stress that while factors on the part of the student do exist and are present, there exists the possibility that more can be done on the part of educators, managers, and funding to remedy this discrepancy. This is not an attempt to remove responsibility from the party in question, but rather the proposition that if this data is a key piece in the puzzle that is this problem, it should be approached from as many angles as possible to come across a solution.
+
+As an example, I offer the proposition put forward by Ahlstrom and Astarta [@BasePaper], that it is not necessarily a poor series of grades that constitutes a lessened likelihood of degree completion, but it is a poor experience in these courses which results in said poor academic performance. The reasons for these potential poor experiences are numerous, but one example is the effect of female professors being present in these disciplines.
+
+Lundberg and Stearns’ research suggests this: that an increase in the presence of female teachers positively correlated to an increase in both female economics Ph.D. students, as well as an increase in female economics senior majors [@Stalled]. While this is indeed just a correlation, it is likely that there is more information to be offered regarding this issue when examining other avenues instead of the most apparent one. As Ginther and Kahn suggest, however, it is likely that there is information about this problem that is as of yet unexplainable by observable characteristics [@Ladder]. 
+
+In a continuation of a previously stated point: what is the effect of a poor classroom experience on grades, specifically in the case of female students, and how can these poor experiences be broken down? Dynan and Rouse state that male students were found to be far more likely to express that the graphs used in class, at first glance, are immediately understandable [@90s]. It is also the case that male students were approximately twice as likely to have taken a linear algebra course prior to enrolling in post-secondary education compared to female students. Is it possible that male students have a better experience in university economics courses due to having a better immediate understanding of the course material compared to female students? In this way, it is not entirely due to a student’s efforts within the class, but rather it is factors from the past that find themselves affecting a student’s current performance.
+
+We also have one more question to ask: is it possible that it is simply the way that the course is being explained, as opposed to the explicit content of the discipline, that is the most significant external factor in affecting the enjoyment of the course? It has been suggested that, due to the influence of introductory courses on whether or not a student decides to pursue economics in post-secondary education, educators could adapt their teaching styles to allow for a broader interest group [@BasePaper]. While we are not arguing that the medium is the message in this specific instance, it can have an effect on encouraging students with the potential within them to continue their studies.
+
+# References
