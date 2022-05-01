@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Clean the survey data downloaded from "The Gender Gap in Undergraduate Economics Course Persistence and Degree" Selection
+# Purpose: Clean survey data downloaded from "The Gender Gap in Undergraduate Economics Course Persistence and Degree" Selection
 # Author: Yahui Zhang, Tiago Martins, Zhiqi Chen
 # Date: 25 February 2022
 # Contact: yahui.zhang@mail.utoronto.ca
